@@ -8,6 +8,7 @@ import type {
   EmailFinderData,
 } from "../../types/email-finder";
 
+import { Input, Button } from "../../components/ui";
 import styles from "./styles.module.css";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -120,18 +121,28 @@ export default function App() {
   };
 
   const renderResults = () => {
-    if (!fetcher.data) return null;
+    if (!fetcher.data) {
+      return (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyStateIcon}>📧</div>
+          <h3>No Results Yet</h3>
+          <p>Enter a name and domain to find email addresses</p>
+        </div>
+      );
+    }
 
     const data = fetcher.data as EmailFinderResponse;
 
     if (data.status === "error") {
       return (
-        <div className={styles.results}>
-          <div className={styles.error}>
-            <h3>❌ Error</h3>
-            <p>
-              <strong>{data.error.code}</strong>: {data.error.message}
-            </p>
+        <div className={styles.resultsContent}>
+          <div className={styles.errorCard}>
+            <div className={styles.errorIcon}>❌</div>
+            <h3>Error</h3>
+            <div className={styles.errorDetails}>
+              <p className={styles.errorCode}>{data.error.code}</p>
+              <p className={styles.errorMessage}>{data.error.message}</p>
+            </div>
           </div>
         </div>
       );
@@ -140,35 +151,60 @@ export default function App() {
     if (data.status === "success") {
       const resultData = data.data as EmailFinderData;
       return (
-        <div className={styles.results}>
-          <div className={styles.success}>
-            <h3>✅ Results</h3>
-            <p>
-              Found {resultData.total} email(s) with {resultData.confidence_score}% confidence
-            </p>
-            <div className={styles.resultDetails}>
-              <p><strong>Name:</strong> {resultData.full_name}</p>
-              <p><strong>Company:</strong> {resultData.company.name}</p>
-              <p><strong>Domain:</strong> {resultData.domain}</p>
-              <p><strong>Found on:</strong> {new Date(resultData.found_on).toLocaleString()}</p>
-            </div>
-            <h4>Email Addresses:</h4>
-            {resultData.emails.map((email, index) => (
-              <div key={index} className={styles.emailResult}>
-                <p>
-                  <strong>Email:</strong>{" "}
-                  <a href={`mailto:${email.email_address}`}>{email.email_address}</a>
+        <div className={styles.resultsContent}>
+          <div className={styles.successCard}>
+            <div className={styles.successHeader}>
+              <div className={styles.successIcon}>✅</div>
+              <div>
+                <h3>Email Found</h3>
+                <p className={styles.confidence}>
+                  {resultData.total} email(s) with {resultData.confidence_score}% confidence
                 </p>
-                <div className={styles.badges}>
-                  <span className={styles.badge}>
-                    {email.role === "yes" ? "Role Email" : "Personal Email"}
-                  </span>
-                  <span className={styles.badge}>
-                    {email.business === "yes" ? "Business" : "Non-Business"}
+              </div>
+            </div>
+
+            <div className={styles.infoCard}>
+              <h4>Details</h4>
+              <div className={styles.infoGrid}>
+                <div className={styles.infoItem}>
+                  <span className={styles.infoLabel}>Name</span>
+                  <span className={styles.infoValue}>{resultData.full_name}</span>
+                </div>
+                <div className={styles.infoItem}>
+                  <span className={styles.infoLabel}>Company</span>
+                  <span className={styles.infoValue}>{resultData.company.name}</span>
+                </div>
+                <div className={styles.infoItem}>
+                  <span className={styles.infoLabel}>Domain</span>
+                  <span className={styles.infoValue}>{resultData.domain}</span>
+                </div>
+                <div className={styles.infoItem}>
+                  <span className={styles.infoLabel}>Found on</span>
+                  <span className={styles.infoValue}>
+                    {new Date(resultData.found_on).toLocaleDateString()}
                   </span>
                 </div>
               </div>
-            ))}
+            </div>
+
+            <div className={styles.emailsSection}>
+              <h4>Email Addresses</h4>
+              {resultData.emails.map((email, index) => (
+                <div key={index} className={styles.emailCard}>
+                  <div className={styles.emailAddress}>
+                    <a href={`mailto:${email.email_address}`}>{email.email_address}</a>
+                  </div>
+                  <div className={styles.badges}>
+                    <span className={styles.badge}>
+                      {email.role === "yes" ? "Role Email" : "Personal Email"}
+                    </span>
+                    <span className={styles.badge}>
+                      {email.business === "yes" ? "Business" : "Non-Business"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       );
@@ -179,65 +215,70 @@ export default function App() {
 
   return (
     <div className={styles.index}>
-      <div className={styles.content}>
-        <h1 className={styles.heading}>Email Finder - Discover Email Addresses</h1>
-        <p className={styles.text}>
-          Find verified email addresses instantly by providing a person's name and domain.
-        </p>
-
-        {/* Email Finder Form */}
-        <div className={styles.form}>
-          <h2>Find Email Address</h2>
-          <label className={styles.label}>
-            <span>Name</span>
-            <input
-              className={styles.input}
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Steven Morris"
-            />
-            <span>Enter the full name of the person</span>
-          </label>
-
-          <label className={styles.label}>
-            <span>Domain or Company Name</span>
-            <input
-              className={styles.input}
-              type="text"
-              value={domain}
-              onChange={(e) => setDomain(e.target.value)}
-              placeholder="e.g., apple.com"
-            />
-            <span>Enter the domain (e.g., apple.com) or company name</span>
-          </label>
-
-          <label className={styles.label}>
-            <span>Timeout (milliseconds)</span>
-            <input
-              className={styles.input}
-              type="number"
-              value={timeout}
-              onChange={(e) => setTimeout(e.target.value)}
-              placeholder="30000"
-              min="10000"
-              max="180000"
-            />
-            <span>Request wait time (min: 10000, max: 180000)</span>
-          </label>
-
-          <button
-            className={styles.button}
-            onClick={handleFindEmail}
-            disabled={isLoading}
-          >
-            {isLoading ? "Finding Email..." : "Find Email"}
-          </button>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.heading}>Email Finder</h1>
+          <p className={styles.subtitle}>
+            Discover verified email addresses instantly
+          </p>
         </div>
 
-        {renderResults()}
+        <div className={styles.mainContent}>
+          {/* Left Column - Form */}
+          <div className={styles.formSection}>
+            <div className={styles.formCard}>
+              <h2 className={styles.formTitle}>Find Email Address</h2>
+              <div className={styles.formInputs}>
+                <Input
+                  id="name"
+                  label="Full Name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Steven Morris"
+                  helperText="Enter the full name of the person"
+                />
 
+                <Input
+                  id="domain"
+                  label="Domain or Company Name"
+                  type="text"
+                  value={domain}
+                  onChange={(e) => setDomain(e.target.value)}
+                  placeholder="e.g., apple.com"
+                  helperText="Enter the domain (e.g., apple.com) or company name"
+                />
 
+                <Input
+                  id="timeout"
+                  label="Timeout (milliseconds)"
+                  type="number"
+                  value={timeout}
+                  onChange={(e) => setTimeout(e.target.value)}
+                  placeholder="30000"
+                  min="10000"
+                  max="180000"
+                  helperText="Request wait time (min: 10000, max: 180000)"
+                />
+
+                <Button
+                  onClick={handleFindEmail}
+                  disabled={isLoading || !name || !domain}
+                  isLoading={isLoading}
+                  fullWidth
+                  size="large"
+                >
+                  {isLoading ? "Finding Email..." : "Find Email"}
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Results */}
+          <div className={styles.resultsSection}>
+            {renderResults()}
+          </div>
+        </div>
       </div>
     </div>
   );

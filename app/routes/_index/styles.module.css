@@ -1,6 +1,5 @@
 .index {
-  min-height: 100vh;
-  width: 100%;
+  min-height: 91vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 2rem;
 }
@@ -32,16 +31,20 @@
 
 /* Two-column layout */
 .mainContent {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 2rem;
   align-items: start;
+  justify-content: center;
+  transition: all 0.5s ease-in-out;
 }
 
 /* Form Section (Left Column) */
 .formSection {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  transition: all 0.5s ease-in-out;
 }
 
 .formCard {
@@ -51,6 +54,42 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 2rem;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #f0f1f2;
+  margin-left: -2rem;
+  margin-right: -2rem;
+  margin-top: -2rem;
+  padding: 0 2rem;
+}
+
+.tab {
+  flex: 1;
+  padding: 1rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6d7175;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.tab:hover {
+  color: #202223;
+  background: #f9fafb;
+}
+
+.tabActive {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background: #f9fafb;
 }
 
 .formTitle {
@@ -69,6 +108,8 @@
 /* Results Section (Right Column) */
 .resultsSection {
   min-height: 400px;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 /* Empty State */
@@ -105,18 +146,6 @@
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Error Card */
@@ -154,6 +183,70 @@
   font-size: 0.9375rem;
   color: #991b1b;
   margin: 0;
+}
+
+/* Validation Errors */
+.validationErrors {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #fecaca;
+}
+
+.validationErrors h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #dc2626;
+  margin: 0 0 0.75rem 0;
+}
+
+.validationError {
+  background: white;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #991b1b;
+}
+
+.validationError:last-child {
+  margin-bottom: 0;
+}
+
+.validationError strong {
+  color: #dc2626;
+}
+
+/* Timeout Information */
+.timeoutInfo {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #fecaca;
+}
+
+.timeoutInfo h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #dc2626;
+  margin: 0 0 0.75rem 0;
+}
+
+.timeoutInfo p {
+  font-size: 0.875rem;
+  color: #991b1b;
+  margin: 0 0 0.5rem 0;
+}
+
+.timeoutInfo p:last-child {
+  margin-bottom: 0;
+}
+
+.timeoutNote {
+  background: white;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-top: 0.75rem !important;
+  font-style: italic;
+  color: #7f1d1d !important;
 }
 
 /* Success Card */
@@ -291,18 +384,94 @@
   letter-spacing: 0.5px;
 }
 
+/* Badge Variants */
+.badgeSuccess {
+  background: #d1f4e0;
+  color: #008060;
+}
+
+.badgeWarning {
+  background: #fff4e6;
+  color: #e67700;
+}
+
+.badgeInfo {
+  background: #e3f2ff;
+  color: #0052cc;
+}
+
+/* Email Verify Specific Styles */
+.aiVerdict {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.aiVerdict h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+}
+
+.aiVerdict p {
+  font-size: 0.9375rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.verifyBadgesSection {
+  background: #f9fafb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.verifyBadgesSection h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #202223;
+  margin: 0 0 1rem 0;
+}
+
+.suggestionCard {
+  background: #fff4e6;
+  border-left: 4px solid #e67700;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+}
+
+.suggestionCard h4 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #e67700;
+  margin: 0 0 0.5rem 0;
+}
+
+.suggestionCard p {
+  font-size: 0.9375rem;
+  color: #202223;
+  margin: 0;
+  font-weight: 500;
+}
+
 /* Responsive Design */
 @media only screen and (max-width: 1024px) {
   .mainContent {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .formSection {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .resultsSection {
+    width: 100% !important;
+    min-height: auto;
   }
 
   .formCard {
     position: static;
-  }
-
-  .resultsSection {
-    min-height: auto;
   }
 }
 
